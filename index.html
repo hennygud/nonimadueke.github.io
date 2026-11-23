@@ -1007,9 +1007,9 @@ async function gSync(action){
     if (action === 'visit') { p.nick = gs.nick; p.token = gs.token; }
     let r = await gCall(p);
     // ответ на квиз за сегодня ещё не отправлен — отправляем (после входа или сразу после ответа)
-    if (r && r.ok && action === 'visit' && answeredToday() && gs.qrep !== dayKey) {
+    if (r && r.ok && action === 'visit' && answeredToday() && (gs.qrep !== dayKey || gs.qv !== 2)) {
       const r2 = await gCall({action: 'quiz', nick: gs.nick, token: gs.token, ok: qs.ok ? '1' : '0', day: dayKey});
-      if (r2 && r2.ok) { gs.qrep = dayKey; gSave(); r = r2; }
+      if (r2 && r2.ok) { if (r2.me && r2.me.ql === dayKey) { gs.qrep = dayKey; gs.qv = 2; gSave(); } r = r2; }   // отмечаем «отправлено» только если сервер реально записал ответ (старая версия скрипта его не запишет)
     }
     if (r && r.ok) { gData = r; gErrKey = ''; }
     else {
