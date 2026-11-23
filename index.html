@@ -47,6 +47,11 @@
   .frame iframe,.frame #yt{position:absolute;inset:0;width:100%;height:100%;border:0}
   .fallback{display:none;position:absolute;inset:0;align-items:center;justify-content:center;flex-direction:column;gap:14px;text-align:center;padding:20px;background:var(--navy-d);color:#cfd8e6}
   .fallback.on{display:flex}
+  .fallback .btn{margin-top:0}
+  .fallback .btn.alt{background:transparent;border:2px solid var(--gold);color:var(--gold-l);cursor:pointer;font-family:inherit}
+  .fallback .btn.alt:hover{background:rgba(255,255,255,.08)}
+  .fallback .btn[hidden]{display:none}
+  .fbcode{font-size:11.5px;opacity:.55}
   .stage.pm{background:#fff}
   .clipphoto{display:block;width:100%;max-width:560px;height:auto;max-height:620px;object-fit:contain}
   .goat{display:inline-block;margin-top:16px;font-family:Oswald,'Arial Narrow',sans-serif;font-weight:700;text-transform:uppercase;letter-spacing:.28em;color:var(--gold-l);background:var(--navy);border:2px solid var(--gold);padding:11px 22px;border-radius:3px}
@@ -302,7 +307,7 @@
     <div class="bar"><span id="barTitle"></span><span class="tag" id="type"></span></div>
     <div class="stage" id="stage"><img id="photo" class="clipphoto" alt="" hidden><div class="frame" id="frame">
       <div id="yt"></div>
-      <div class="fallback" id="fb"><div id="noPlayer"></div><a class="btn" id="fbLink" target="_blank" rel="noopener"></a></div>
+      <div class="fallback" id="fb"><div id="noPlayer"></div><a class="btn" id="fbLink" target="_blank" rel="noopener"></a><button type="button" class="btn alt" id="fbAlt" hidden></button><div class="fbcode" id="fbCode"></div></div>
     </div></div>
     <div class="info">
       <div class="title" id="title"></div>
@@ -358,7 +363,7 @@ const I18N = {
     kicker: "Причина дня",
     h1: `Причина дать Нони Мадуэке <span class="gold">Золотой мяч</span>`,
     reason: "Причина", moment: "Причина дня",
-    open: "Открыть на YouTube", noPlayer: "Плеер не загрузился в этом окне.", watch: "Смотреть на YouTube →",
+    open: "Открыть на YouTube", noPlayer: "Плеер не загрузился в этом окне.", errEmbed: "Автор запретил показ этого видео на других сайтах.", errGone: "Это видео недоступно на YouTube.", errNet: "Плеер YouTube не отвечает. Возможно, YouTube заблокирован или медленно работает в вашей сети.", altPlayer: "Попробовать другой плеер", watch: "Смотреть на YouTube →",
     all: "Все причины",
     footer: "Новая причина — каждый день. Видео принадлежат их авторам и играют через официальный плеер YouTube. Сайт неофициальный и не связан с клубом.",
     heroAlt: "Игрок в красной майке «Арсенала» с золотым мячом в руке", photoAlt: "Нони Мадуэке",
@@ -383,7 +388,7 @@ const I18N = {
     kicker: "Reason of the day",
     h1: `A reason to give Noni Madueke the <span class="gold">Ballon d'Or</span>`,
     reason: "Reason", moment: "Reason of the day",
-    open: "Open on YouTube", noPlayer: "The player didn't load in this window.", watch: "Watch on YouTube →",
+    open: "Open on YouTube", noPlayer: "The player didn't load in this window.", errEmbed: "The owner has disabled playback on other sites.", errGone: "This video is unavailable on YouTube.", errNet: "The YouTube player isn't responding. YouTube may be blocked or slow on your network.", altPlayer: "Try another player", watch: "Watch on YouTube →",
     all: "All reasons",
     footer: "A new reason every day. Videos belong to their authors and play through the official YouTube player. Unofficial site, not affiliated with any club.",
     heroAlt: "A player in a red Arsenal shirt holding a golden trophy ball", photoAlt: "Noni Madueke",
@@ -854,14 +859,43 @@ function show(dayIdx){
   else if (apiReady) makePlayer(c);
 }
 
+const YT_HOSTS = ['https://www.youtube-nocookie.com', 'https://www.youtube.com'];
+let ytHostIdx = 0, readyTimer = null, playerReady = false, errCode = '';
+try { ytHostIdx = localStorage.getItem('ythost') === '1' ? 1 : 0; } catch (e) {}
+
+function showFallback(kind, code){
+  const l = L();
+  errCode = code || '';
+  $('noPlayer').textContent = kind === 'embed' ? l.errEmbed : kind === 'gone' ? l.errGone : kind === 'net' ? l.errNet : l.noPlayer;
+  $('fbCode').textContent = code ? 'YouTube: ' + code : '';
+  $('fbAlt').hidden = (kind === 'embed' || kind === 'gone');          // другой плеер имеет смысл только при проблемах сети/загрузки
+  $('fbAlt').textContent = l.altPlayer;
+  $('fb').classList.add('on');
+}
+function hideFallback(){ $('fb').classList.remove('on'); }
+
 function makePlayer(c){
   if (!c.id) return;
+  playerReady = false; clearTimeout(readyTimer);
   player = new YT.Player('yt', {
-    host: 'https://www.youtube-nocookie.com',
+    host: YT_HOSTS[ytHostIdx],
     videoId: c.id,
     playerVars: {rel: 0, modestbranding: 1, playsinline: 1},
-    events: {onError: () => $('fb').classList.add('on')}
+    events: {
+      onReady: () => { playerReady = true; clearTimeout(readyTimer); hideFallback(); },
+      onError: e => { const k = e && e.data; showFallback(k === 101 || k === 150 ? 'embed' : (k === 100 ? 'gone' : 'other'), k); }
+    }
   });
+  readyTimer = setTimeout(() => { if (!playerReady) showFallback('net', 'timeout'); }, 10000);   // iframe создан, но YouTube не отвечает
+}
+function switchPlayer(){
+  ytHostIdx = 1 - ytHostIdx;
+  try { localStorage.setItem('ythost', String(ytHostIdx)); } catch (e) {}
+  try { if (player && player.destroy) player.destroy(); } catch (e) {}
+  player = null;
+  if (!document.getElementById('yt')) { const d = document.createElement('div'); d.id = 'yt'; $('frame').prepend(d); }
+  hideFallback();
+  if (apiReady && current && current.id) makePlayer(current);
 }
 
 // архив: от №1 до сегодняшнего (будущие дни не раскрываем)
@@ -1163,9 +1197,11 @@ document.querySelectorAll('.lang button').forEach(b => b.addEventListener('click
 window.addEventListener('hashchange', () => { const h = location.hash.replace('#', ''); if ((h === 'en' || h === 'ru') && h !== lang) { lang = h; applyLang(); } });
 
 // YouTube IFrame API
-window.onYouTubeIframeAPIReady = () => { apiReady = true; if (current && current.id) makePlayer(current); };
+window.onYouTubeIframeAPIReady = () => { apiReady = true; clearTimeout(apiTimer); if (current && current.id) makePlayer(current); };
+$('fbAlt').onclick = switchPlayer;
 const sc = document.createElement('script'); sc.src = 'https://www.youtube.com/iframe_api'; document.head.append(sc);
-setTimeout(() => { if (!apiReady) $('fb').classList.add('on'); }, 5000); // если API не загрузилось
+sc.onerror = () => { if (!apiReady) showFallback('net', 'script'); };
+const apiTimer = setTimeout(() => { if (!apiReady && current && current.id) showFallback('net', 'timeout'); }, 8000); // API не загрузилось (YouTube недоступен). Если оно придёт позже — плеер всё равно создастся и плашка уберётся
 
 applyLang();
 show(today);
