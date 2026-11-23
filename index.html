@@ -75,6 +75,7 @@
   .gform input{flex:1;min-width:180px;font:inherit;font-weight:600;padding:13px 14px;border:2px solid var(--line);border-radius:4px}
   .gform input:focus{outline:none;border-color:var(--navy)}
   .gform .btn{margin-top:0;border:0;cursor:pointer;font-family:inherit}
+  .gform[hidden]{display:none}
   .gerr{color:var(--red);font-weight:600;font-size:13.5px;margin-top:10px;min-height:1em}
   .gme{display:flex;flex-wrap:wrap;gap:8px 22px;align-items:baseline;margin-bottom:16px}
   .gme b{font-family:Oswald,'Arial Narrow',sans-serif;font-size:24px;text-transform:uppercase}
@@ -143,6 +144,27 @@
   .b-play{background:var(--bg);padding-top:44px;--next:#fff}
   .b-arch{background:#fff;padding:12px 0 64px}
   .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,430px),1fr));gap:34px 28px;align-items:start}
+
+
+  /* админ-панель (открывается по адресу …/#admin) */
+  .b-adm{background:#0b1b33;padding:34px 0 40px;border-bottom:4px solid var(--gold)}
+  .b-adm[hidden]{display:none}
+  .admstats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:16px}
+  .admstats div{background:#f6f2e8;border-radius:4px;border-top:3px solid var(--red);padding:10px 12px}
+  .admstats b{display:block;font-family:Oswald,'Arial Narrow',sans-serif;font-size:26px;color:var(--navy);line-height:1.1}
+  .admstats span{font-size:11.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+  .admwrap{overflow-x:auto;margin-top:6px}
+  .admt{width:100%;border-collapse:collapse;font-size:13.5px;min-width:640px}
+  .admt th{text-align:left;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--mute);padding:8px 8px;border-bottom:2px solid var(--line);white-space:nowrap}
+  .admt td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:middle}
+  .admt tr.now td{background:#fff8e6}
+  .admt .nm{font-weight:700}
+  .admt .act{white-space:nowrap;text-align:right}
+  .admt .act button{font:inherit;font-size:12px;font-weight:700;padding:5px 9px;margin-left:4px;border:1px solid var(--line);background:#fff;border-radius:3px;cursor:pointer;color:var(--ink)}
+  .admt .act button:hover{border-color:var(--red);color:var(--red)}
+  .admt .act button.del{color:var(--red)}
+  .admt a{color:var(--navy);font-weight:600}
+  .admnote{margin:10px 0 0;padding:10px 12px;background:#fff8e6;border-left:4px solid var(--gold);font-size:13.5px;line-height:1.5}
 
   /* золотые уголки на карточках */
   .brk::before,.brk::after{content:"";position:absolute;width:26px;height:26px;border:0 solid var(--gold);pointer-events:none;z-index:2}
@@ -241,6 +263,23 @@
     </button>
   </div>
 </div></div>
+
+<section class="band b-adm" id="adm" hidden><div class="wrap">
+  <div class="card brk">
+    <div class="bar"><span>Админ-панель</span><span class="tag" id="admTag"></span></div>
+    <div class="gbody">
+      <form class="gform" id="admLogin" style="margin-top:0"><input type="password" id="admKey" placeholder="Пароль администратора" autocomplete="current-password"><button class="btn" type="submit">Войти</button></form>
+      <div class="gerr" id="admErr"></div>
+      <div id="admMain" hidden>
+        <div class="admstats" id="admStats"></div>
+        <div class="gtabs"><button type="button" id="atU" aria-pressed="true">Участники</button><button type="button" id="atC" aria-pressed="false">Клипы</button></div>
+        <div id="admUsers" class="admwrap"></div>
+        <div id="admClips" class="admwrap" hidden></div>
+        <div style="margin-top:14px"><a href="#" id="admOut" style="font-size:13px;color:var(--mute)">Выйти из админки</a></div>
+      </div>
+    </div>
+  </div>
+</div></section>
 
 <header class="hero">
   <div class="bigno" id="bigNo" aria-hidden="true"></div>
@@ -743,7 +782,9 @@ const QUESTIONS = [
 const START = Date.UTC(2026, 10, 23);          // день №1 — 23.11.2026
 const MS = 86400000;
 const now = new Date();
-const today = Math.max(0, Math.floor((Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) - START) / MS)); // 0-based
+/* Все даты считаются по московскому времени (UTC+3, без перехода на летнее): новый день для всех наступает в 00:00 по Москве */
+const mskDay0 = Math.floor((Date.now() + 3 * 3600000) / MS) * MS;          // полночь МСК текущего дня, как UTC-метка
+const today = Math.max(0, Math.floor((mskDay0 - START) / MS)); // 0-based
 const $ = id => document.getElementById(id);
 /* иконки типов: минималистичные, stroke = currentColor */
 const ICONS = {
@@ -845,13 +886,13 @@ function mulberry(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t =
 function shuffled(n, seed){ const r = mulberry(seed), a = [...Array(n).keys()]; for (let i = n - 1; i > 0; i--){ const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 
 const NQ = QUESTIONS.length;
-const dayKey = Math.floor(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate()) / MS);   // номер дня (общий для всех)
+const dayKey = Math.floor(mskDay0 / MS);   // номер дня (общий для всех)
 const qCycle = Math.floor(dayKey / NQ);
 const qIdx = shuffled(NQ, qCycle * 7919 + 12345)[((dayKey % NQ) + NQ) % NQ];                   // «случайный», но один и тот же весь день; без повторов пока не пройден весь банк
 const qOrder = shuffled(QUESTIONS[qIdx].ru.o.length, dayKey * 31 + 7);                         // порядок вариантов (одинаков в RU и EN)
 const SKEY = 'madueke_quiz_v1';
 const CEREMONY = Date.UTC(2027, 9, 26);                                   // 26 октября 2027
-const cdLeft = Math.round((CEREMONY - Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())) / MS);
+const cdLeft = Math.round((CEREMONY - mskDay0) / MS);
 let qs = {};
 try { qs = JSON.parse(localStorage.getItem(SKEY)) || {}; } catch (e) { qs = {}; }
 function saveQ(){ try { localStorage.setItem(SKEY, JSON.stringify(qs)); } catch (e) {} }
@@ -1003,6 +1044,89 @@ $('gtS').onclick = () => { gTab = 's'; renderGlz(); };
 $('gtQ').onclick = () => { gTab = 'q'; renderGlz(); };
 $('gtQS').onclick = () => { gTab = 'qs'; renderGlz(); };
 
+/* ---------- Админ-панель: …/#admin ---------- */
+const ADMK = 'madueke_admin_key';
+let admKey = '', admTab = 'u', admData = null;
+try { admKey = sessionStorage.getItem(ADMK) || ''; } catch (e) {}
+const admDate = d => new Date(d * MS).toLocaleDateString('ru-RU', {day: 'numeric', month: 'short', timeZone: 'UTC'});
+function admErr(code){
+  return ({forbidden: 'Неверный пароль.', admin_off: 'Админка выключена: в glazers.gs не задан ADMIN_KEY (сейчас CHANGE-ME) или не опубликована новая версия.', not_found: 'Участник не найден.', taken: 'Такой ник уже есть.', bad_nick: 'Ник: 2–20 символов, буквы, цифры, пробел, _ - .', net: 'Нет связи с таблицей.'})[code] || 'Ошибка: ' + code;
+}
+async function admCall(extra){
+  if (!gOn()) { $('admErr').textContent = 'Рейтинг не подключён (пустой GU в index.html).'; return; }
+  try {
+    const r = await gCall(Object.assign({action: 'admin_list', key: admKey, day: dayKey}, extra || {}));
+    if (r && r.ok) { admData = r; $('admErr').textContent = ''; try { sessionStorage.setItem(ADMK, admKey); } catch (e) {} }
+    else { $('admErr').textContent = admErr(r && r.error); if (r && r.error === 'forbidden') { admData = null; try { sessionStorage.removeItem(ADMK); } catch (e) {} } }
+  } catch (e) { $('admErr').textContent = admErr('net'); }
+  renderAdm();
+}
+function admBtn(text, cls, fn){ const b = document.createElement('button'); b.type = 'button'; b.textContent = text; if (cls) b.className = cls; b.onclick = fn; return b; }
+function renderAdm(){
+  const ok = !!admData;
+  $('admLogin').hidden = ok; $('admMain').hidden = !ok;
+  $('admTag').textContent = ok ? 'доступ открыт' : 'вход';
+  if (!ok) return;
+  const st = admData.stats, box = $('admStats'); box.textContent = '';
+  [[st.total, 'участников'], [st.activeToday, 'заходили сегодня'], [st.newToday, 'новых сегодня'], [st.quizToday, 'ответили на квиз'], [st.visitsSum, 'заходов всего']].forEach(([v, t]) => {
+    const d = document.createElement('div'), b = document.createElement('b'), sp = document.createElement('span'); b.textContent = v; sp.textContent = t; d.append(b, sp); box.append(d);
+  });
+  $('atU').setAttribute('aria-pressed', String(admTab === 'u')); $('atC').setAttribute('aria-pressed', String(admTab === 'c'));
+  $('admUsers').hidden = admTab !== 'u'; $('admClips').hidden = admTab !== 'c';
+  // участники
+  const uw = $('admUsers'); uw.textContent = '';
+  if (!admData.users.length) { const e = document.createElement('div'); e.className = 'gempty'; e.textContent = 'Пока никого.'; uw.append(e); }
+  else {
+    const t = document.createElement('table'); t.className = 'admt';
+    t.innerHTML = '<thead><tr><th>Ник</th><th>Заходов</th><th>Стрик</th><th>Рекорд</th><th>Квиз</th><th>Стрик квиза</th><th>Был</th><th></th></tr></thead>';
+    const tb = document.createElement('tbody');
+    admData.users.forEach(u => {
+      const tr = document.createElement('tr'); if (u.l === admData.day) tr.className = 'now';
+      const cell = txt => { const td = document.createElement('td'); td.textContent = txt; return td; };
+      const nm = cell(u.n); nm.className = 'nm';
+      const act = document.createElement('td'); act.className = 'act';
+      act.append(
+        admBtn('Ник', '', () => { const to = prompt('Новый ник для «' + u.n + '»:', u.n); if (to && to.trim() && to.trim() !== u.n) admCall({action: 'admin_rename', nick: u.n, to: to.trim()}); }),
+        admBtn('Сброс заходов', '', () => { if (confirm('Обнулить заходы и стрик «' + u.n + '»?')) admCall({action: 'admin_reset', nick: u.n, what: 'visits'}); }),
+        admBtn('Сброс квиза', '', () => { if (confirm('Обнулить квиз «' + u.n + '»?')) admCall({action: 'admin_reset', nick: u.n, what: 'quiz'}); }),
+        admBtn('Удалить', 'del', () => { if (confirm('Удалить «' + u.n + '» из рейтинга?')) admCall({action: 'admin_delete', nick: u.n}); })
+      );
+      tr.append(nm, cell(u.v), cell(u.s), cell(u.b), cell(u.qt ? u.qr + ' из ' + u.qt : '—'), cell(u.qt ? u.qs + ' (рек. ' + u.qb + ')' : '—'), cell(u.l ? admDate(u.l) : '—'), act);
+      tb.append(tr);
+    });
+    t.append(tb); uw.append(t);
+  }
+  // клипы
+  const cw = $('admClips'); cw.textContent = '';
+  const ct = document.createElement('table'); ct.className = 'admt';
+  ct.innerHTML = '<thead><tr><th>№</th><th>Дата</th><th>Тип</th><th>Название</th><th>Статус</th><th>Ссылка</th></tr></thead>';
+  const cb = document.createElement('tbody');
+  CLIPS.forEach((c, i) => {
+    const tr = document.createElement('tr'); if (i === today) tr.className = 'now';
+    const cell = txt => { const td = document.createElement('td'); td.textContent = txt; return td; };
+    const ty = document.createElement('td'); setLabel(ty, TYPEKEY[c.type], c.type);
+    const lk = document.createElement('td');
+    if (c.id) { const a = document.createElement('a'); a.href = url(c); a.target = '_blank'; a.rel = 'noopener'; a.textContent = c.id; lk.append(a); } else lk.textContent = '—';
+    tr.append(cell(i + 1), cell(admDate(Math.floor(START / MS) + i)), ty, cell(c.t), cell(i < today ? 'был' : i === today ? 'сегодня' : 'ждёт'), lk);
+    cb.append(tr);
+  });
+  ct.append(cb); cw.append(ct);
+  const left = CLIPS.length - 1 - today;
+  const n = document.createElement('div'); n.className = 'admnote';
+  n.textContent = left > 0 ? 'Клипов хватит до ' + admDate(Math.floor(START / MS) + CLIPS.length - 1) + ' (ещё ' + left + ' дн.), потом они пойдут по второму кругу. Новые ссылки добавляются в массив CLIPS.' : 'Клипы закончились: сейчас показывается повтор. Добавьте новые в массив CLIPS.';
+  cw.append(n);
+}
+function admRoute(){
+  const on = location.hash === '#admin';
+  $('adm').hidden = !on;
+  if (on){ renderAdm(); if (admKey && !admData) admCall(); window.scrollTo({top: 0}); }
+}
+$('admLogin').addEventListener('submit', e => { e.preventDefault(); admKey = $('admKey').value; admCall(); });
+$('atU').onclick = () => { admTab = 'u'; renderAdm(); };
+$('atC').onclick = () => { admTab = 'c'; renderAdm(); };
+$('admOut').onclick = e => { e.preventDefault(); admKey = ''; admData = null; try { sessionStorage.removeItem(ADMK); } catch (er) {} $('admKey').value = ''; history.replaceState(null, '', '#' + lang); admRoute(); };
+window.addEventListener('hashchange', admRoute);
+
 function applyLang(){
   const l = L();
   document.documentElement.lang = lang;
@@ -1021,7 +1145,7 @@ function applyLang(){
   const cd = $('cd'); cd.hidden = cdLeft < 0; cd.textContent = '';
   if (cdLeft === 0) cd.textContent = l.cdToday;
   else if (cdLeft > 0) { const b = document.createElement('b'); b.textContent = cdLeft; cd.append(l.cdPre + ' ', b, ' ' + l.cdDays(cdLeft)); }
-  $('date').textContent = now.toLocaleDateString(l.locale, {day:'numeric', month:'long', weekday:'long'});
+  $('date').textContent = now.toLocaleDateString(l.locale, {day:'numeric', month:'long', weekday:'long', timeZone:'Europe/Moscow'});
   document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
   buildGrid();
   renderText(curIdx);
@@ -1045,6 +1169,7 @@ setTimeout(() => { if (!apiReady) $('fb').classList.add('on'); }, 5000); // ес
 
 applyLang();
 show(today);
+admRoute();
 if (gOn()) gSync(gs.nick ? 'visit' : 'top');
 </script>
 </body>
