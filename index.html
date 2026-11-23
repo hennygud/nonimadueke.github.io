@@ -36,7 +36,7 @@
   .wrap{max-width:1080px;margin:0 auto;padding:30px 20px 60px}
   .card{background:#fff;border:1px solid var(--line);border-radius:6px;overflow:hidden;box-shadow:0 8px 30px rgba(6,54,114,.08)}
   .card .bar{background:var(--navy);color:#fff;padding:12px 20px;display:flex;justify-content:space-between;align-items:center;font-weight:700;letter-spacing:.1em;text-transform:uppercase;font-size:13px}
-  .tag{background:var(--gold);color:#1a1300;border-radius:3px;padding:3px 9px;font-size:12px}
+  .tag{white-space:nowrap;background:var(--gold);color:#1a1300;border-radius:3px;padding:3px 9px;font-size:12px}
   .stage{display:flex;justify-content:center;background:#000}
   .frame{position:relative;width:100%;aspect-ratio:16/9;background:#000}
   .frame.short{aspect-ratio:9/16;width:auto;height:min(78vh,640px);max-width:100%}
@@ -64,6 +64,32 @@
   .grid span{display:block;font-size:13.5px;margin-top:6px;line-height:1.35}
   footer{background:var(--navy-d);color:#aab8cf;font-size:12.5px;line-height:1.6;padding:28px 20px}
   footer div{max-width:1080px;margin:0 auto}
+
+  .glz{margin-top:22px}
+  .glz[hidden]{display:none}
+  .gbody{padding:22px}
+  .gform{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+  .gform input{flex:1;min-width:180px;font:inherit;font-weight:600;padding:13px 14px;border:2px solid var(--line);border-radius:4px}
+  .gform input:focus{outline:none;border-color:var(--navy)}
+  .gform .btn{margin-top:0;border:0;cursor:pointer;font-family:inherit}
+  .gerr{color:var(--red);font-weight:600;font-size:13.5px;margin-top:10px;min-height:1em}
+  .gme{display:flex;flex-wrap:wrap;gap:8px 22px;align-items:baseline;margin-bottom:16px}
+  .gme b{font-family:Oswald,'Arial Narrow',sans-serif;font-size:24px;text-transform:uppercase}
+  .gme span{font-size:13.5px;color:var(--mute)}
+  .gme span strong{color:var(--ink)}
+  .gme a{margin-left:auto;font-size:12.5px;color:var(--mute);cursor:pointer;text-decoration:underline}
+  .gtabs{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+  .gtabs button{font:inherit;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase;padding:10px 12px;border:2px solid var(--line);background:#fff;border-radius:4px;cursor:pointer;color:var(--ink)}
+  .gtabs button[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:#fff}
+  .glist{list-style:none;margin:0;padding:0}
+  .glist li{display:grid;grid-template-columns:34px 1fr auto auto;gap:10px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line);font-weight:600}
+  .glist li:nth-child(-n+3) .r{color:var(--red)}
+  .glist li.me{background:#fff8e6}
+  .glist .r{font-family:Oswald,'Arial Narrow',sans-serif;font-weight:700;color:var(--mute);font-size:18px}
+  .glist .n{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .glist .v{font-family:Oswald,'Arial Narrow',sans-serif;font-weight:700;font-size:20px;color:var(--navy)}
+  .glist .u{font-size:12px;color:var(--mute);font-weight:600;min-width:46px;text-align:right}
+  .gempty{color:var(--mute);padding:14px 0}
 
   .quiz{margin-top:22px}
   .streak{display:inline-flex;align-items:center;gap:6px;background:var(--gold);color:#1a1300;border-radius:3px;padding:3px 9px;font-size:12px}
@@ -125,7 +151,12 @@
     .grid em{font-size:10.5px}
     .grid span{font-size:12.5px}
     footer{padding:22px 14px}
-    .quiz{margin-top:16px}
+    .quiz,.glz{margin-top:16px}
+    .gbody{padding:16px 14px}
+    .gform input{min-width:0;width:100%;flex:none}
+    .gform .btn{width:100%}
+    .gme a{margin-left:0}
+    .gtabs{display:grid;grid-template-columns:1fr 1fr}
     .qbody{padding:16px 14px}
     .opts{grid-template-columns:1fr;gap:8px}
     .opt{min-height:52px}
@@ -183,6 +214,22 @@
     </div>
   </section>
 
+  <section class="card glz" id="glz" hidden>
+    <div class="bar"><span id="gTitle"></span><span class="tag" id="gTotal"></span></div>
+    <div class="gbody">
+      <div id="gJoin">
+        <div class="desc" id="gIntro" style="margin:0"></div>
+        <form class="gform" id="gForm"><input id="gNick" maxlength="20" autocomplete="nickname" autocapitalize="off"><button class="btn" id="gGo" type="submit"></button></form>
+      </div>
+      <div id="gMe" hidden></div>
+      <div class="gerr" id="gErr"></div>
+      <div id="gBoard" hidden>
+        <div class="gtabs"><button type="button" id="gtV"></button><button type="button" id="gtS"></button><button type="button" id="gtQ"></button><button type="button" id="gtQS"></button></div>
+        <ol class="glist" id="gList"></ol>
+      </div>
+    </div>
+  </section>
+
   <h2 id="allTitle"></h2>
   <div class="grid" id="grid"></div>
 </div>
@@ -211,6 +258,11 @@ const I18N = {
     okT: "Верно!", badT: "Неверно.", rightIs: "Правильный ответ:", source: "Источник:",
     okNote: n => "Стрик: " + n + " " + I18N.ru.days(n) + ". Новый вопрос — завтра.",
     badNote: "Стрик обнулён. Новый вопрос — завтра, попробуй снова.",
+    glz: "Суперфаны Нони Мадуэке", glzIntro: "Впиши ник и вступай в рейтинг: считаем заходы, стрик заходов и правильные ответы в квизе.",
+    nickPh: "Твой ник", join: "Вступить", members: n => n + " " + (n % 10 === 1 && n % 100 !== 11 ? "суперфан" : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) ? "суперфана" : "суперфанов"),
+    tabV: "Заходы", tabS: "Стрик заходов", tabQ: "Квиз: верных", tabQS: "Квиз: стрик", quizYou: "Квиз", rightOf: (r, t) => r + " из " + t, unitQ: "верно", noQuiz: "Пока никто не ответил на квиз.", you: "Ты", visits: "заходов", inRow: "подряд", bestS: "рекорд", place: "место", leave: "сменить ник",
+    unitV: "дн.", unitS: "дн.", empty: "Пока никого. Стань первым!",
+    gErr: {bad_nick: "Ник: 2–20 символов, буквы, цифры, пробел, _ - .", taken: "Этот ник уже занят. Выбери другой.", bad_day: "Часы на устройстве сильно сбиты — не получилось засчитать заход.", net: "Нет связи с рейтингом. Попробуй позже.", server: "Ошибка рейтинга. Попробуй позже.", bad_token: "Ошибка. Попробуй другой ник."},
   },
   en: {
     locale: "en-GB", no: "#",
@@ -230,6 +282,11 @@ const I18N = {
     okT: "Correct!", badT: "Not quite.", rightIs: "Correct answer:", source: "Source:",
     okNote: n => "Streak: " + n + " " + I18N.en.days(n) + ". New question tomorrow.",
     badNote: "Streak reset. New question tomorrow — try again.",
+    glz: "Noni Madueke Glazers", glzIntro: "Enter a nickname to join the ranking: we count visits, visit streaks and correct quiz answers.",
+    nickPh: "Your nickname", join: "Join", members: n => n + (n === 1 ? " glazer" : " glazers"),
+    tabV: "Visits", tabS: "Visit streak", tabQ: "Quiz: correct", tabQS: "Quiz: streak", quizYou: "Quiz", rightOf: (r, t) => r + " of " + t, unitQ: "right", noQuiz: "Nobody has answered the quiz yet.", you: "You", visits: "visits", inRow: "in a row", bestS: "best", place: "rank", leave: "change nickname",
+    unitV: "d", unitS: "d", empty: "Nobody yet. Be the first!",
+    gErr: {bad_nick: "Nickname: 2–20 characters, letters, digits, space, _ - .", taken: "That nickname is taken. Pick another.", bad_day: "Your device clock is way off — the visit couldn't be counted.", net: "Can't reach the ranking. Try again later.", server: "Ranking error. Try again later.", bad_token: "Error. Try another nickname."},
   }
 };
 
@@ -708,6 +765,7 @@ function answer(orig){
   qs.last = dayKey; qs.pickDay = dayKey; qs.pick = orig; qs.ok = ok;
   qs.total = (qs.total || 0) + 1; qs.right = (qs.right || 0) + (ok ? 1 : 0);
   saveQ(); renderQuiz();
+  if (typeof gSync === 'function' && gs && gs.nick) gSync('visit');
 }
 
 function renderQuiz(){
@@ -746,6 +804,104 @@ function renderQuiz(){
   }
 }
 
+/* ---------- Рейтинг Noni Madueke Glazers (бэкенд — Google Apps Script, см. glazers.gs) ---------- */
+const GU = "https://script.google.com/macros/s/AKfycbydWJNcLBR1l4tYqEbMIsi7cvspcIJW58P0NdRW4IQSZXylEsSvlXNxhMHNtSG-Wjbv/exec";
+const GKEY = 'madueke_glazers_v1';
+let gs = {};
+try { gs = JSON.parse(localStorage.getItem(GKEY)) || {}; } catch (e) { gs = {}; }
+const gSave = () => { try { localStorage.setItem(GKEY, JSON.stringify(gs)); } catch (e) {} };
+let gData = null, gTab = 'v', gErrKey = '', gBusy = false;
+const gOn = () => /^https:\/\//.test(GU);
+
+function gToken(){
+  const a = new Uint8Array(16);
+  (window.crypto || window.msCrypto).getRandomValues(a);
+  return Array.from(a, x => x.toString(16).padStart(2, '0')).join('');
+}
+function gCall(params){
+  return fetch(GU + (GU.includes('?') ? '&' : '?') + new URLSearchParams(params)).then(r => r.json());
+}
+let gAgain = false;
+async function gSync(action){
+  if (!gOn()) return;
+  if (gBusy) { gAgain = true; return; }
+  gBusy = true;
+  try {
+    const p = {action: action, day: dayKey};
+    if (action === 'visit') { p.nick = gs.nick; p.token = gs.token; }
+    let r = await gCall(p);
+    // ответ на квиз за сегодня ещё не отправлен — отправляем (после входа или сразу после ответа)
+    if (r && r.ok && action === 'visit' && answeredToday() && gs.qrep !== dayKey) {
+      const r2 = await gCall({action: 'quiz', nick: gs.nick, token: gs.token, ok: qs.ok ? '1' : '0', day: dayKey});
+      if (r2 && r2.ok) { gs.qrep = dayKey; gSave(); r = r2; }
+    }
+    if (r && r.ok) { gData = r; gErrKey = ''; }
+    else {
+      gErrKey = (r && r.error) || 'server';
+      if (action === 'visit' && (gErrKey === 'taken' || gErrKey === 'bad_nick')) { gs = {}; gSave(); }
+    }
+  } catch (e) { gErrKey = 'net'; }
+  gBusy = false;
+  renderGlz();
+  if (gAgain) { gAgain = false; gSync(gs.nick ? 'visit' : 'top'); }
+}
+function gJoin(nick){
+  nick = nick.trim().replace(/\s+/g, ' ');
+  if (!/^[\p{L}\p{N}_\-. ]{2,20}$/u.test(nick)) { gErrKey = 'bad_nick'; renderGlz(); return; }
+  gs = {nick: nick, token: gToken()}; gSave();
+  gSync('visit');
+}
+
+function renderGlz(){
+  const box = $('glz');
+  if (!gOn()) { box.hidden = true; return; }
+  box.hidden = false;
+  const l = L(), joined = !!gs.nick;
+  $('gTitle').textContent = l.glz;
+  $('gTotal').textContent = gData ? l.members(gData.total) : '';
+  $('gTotal').hidden = !gData;
+  $('gIntro').textContent = l.glzIntro;
+  $('gNick').placeholder = l.nickPh; $('gNick').setAttribute('aria-label', l.nickPh);
+  $('gGo').textContent = l.join;
+  $('gJoin').hidden = joined;
+  $('gErr').textContent = gErrKey ? (l.gErr[gErrKey] || l.gErr.server) : '';
+
+  const me = $('gMe');
+  me.hidden = !(joined && gData && gData.me);
+  if (!me.hidden){
+    const m = gData.me; me.textContent = '';
+    const w = document.createElement('div'); w.className = 'gme';
+    const nm = document.createElement('b'); nm.textContent = m.n;
+    const sp = (label, val) => { const x = document.createElement('span'); x.append(label + ' '); const st = document.createElement('strong'); st.textContent = val; x.append(st); return x; };
+    const lk = document.createElement('a'); lk.textContent = l.leave;
+    lk.onclick = () => { gs = {}; gSave(); gErrKey = ''; renderGlz(); };
+    w.append(nm, sp(l.visits + ':', m.v), sp(l.streak + ':', m.s + ' ' + l.inRow), sp(l.bestS + ':', m.b), sp(l.place + ':', (rk => rk ? '#' + rk : '—')(({v: m.rankV, s: m.rankS, q: m.rankQR, qs: m.rankQS})[gTab])), lk);
+    me.append(w);
+    if (m.qt) { const qd = document.createElement('div'); qd.className = 'gme'; qd.append(sp(l.quizYou + ':', l.rightOf(m.qr, m.qt)), sp(l.streak + ':', m.qs + ' ' + l.inRow), sp(l.bestS + ':', m.qb)); me.append(qd); }
+  }
+
+  const board = $('gBoard'); board.hidden = !gData;
+  if (!gData) return;
+  [['gtV','tabV','v'],['gtS','tabS','s'],['gtQ','tabQ','q'],['gtQS','tabQS','qs']].forEach(([id, k, t]) => { $(id).textContent = l[k]; $(id).setAttribute('aria-pressed', String(gTab === t)); });
+  const list = ({v: gData.byVisits, s: gData.byStreak, q: gData.quizRight, qs: gData.quizStreak})[gTab] || [], ul = $('gList');
+  ul.textContent = '';
+  if (!list.length){ const e = document.createElement('div'); e.className = 'gempty'; e.textContent = (gTab === 'q' || gTab === 'qs') ? l.noQuiz : l.empty; ul.append(e); return; }
+  const mine = joined ? gs.nick.toLowerCase() : null;
+  list.forEach((x, i) => {
+    const li = document.createElement('li'); if (x.n.toLowerCase() === mine) li.className = 'me';
+    const r = document.createElement('span'); r.className = 'r'; r.textContent = i + 1;
+    const n = document.createElement('span'); n.className = 'n'; n.textContent = x.n;
+    const v = document.createElement('span'); v.className = 'v'; v.textContent = ({v: x.v, s: x.s, q: x.qr, qs: x.qs})[gTab];
+    const u = document.createElement('span'); u.className = 'u'; u.textContent = gTab === 'q' ? l.unitQ + ' / ' + x.qt : (gTab === 'v' ? l.unitV : l.unitS);
+    li.append(r, n, v, u); ul.append(li);
+  });
+}
+$('gForm').addEventListener('submit', e => { e.preventDefault(); gJoin($('gNick').value); });
+$('gtV').onclick = () => { gTab = 'v'; renderGlz(); };
+$('gtS').onclick = () => { gTab = 's'; renderGlz(); };
+$('gtQ').onclick = () => { gTab = 'q'; renderGlz(); };
+$('gtQS').onclick = () => { gTab = 'qs'; renderGlz(); };
+
 function applyLang(){
   const l = L();
   document.documentElement.lang = lang;
@@ -765,6 +921,7 @@ function applyLang(){
   buildGrid();
   renderText(curIdx);
   renderQuiz();
+  renderGlz();
 }
 
 function setLang(code){
@@ -783,6 +940,7 @@ setTimeout(() => { if (!apiReady) $('fb').classList.add('on'); }, 5000); // ес
 
 applyLang();
 show(today);
+if (gOn()) gSync(gs.nick ? 'visit' : 'top');
 </script>
 </body>
 </html>
