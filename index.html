@@ -169,6 +169,9 @@
   .admt .act button:hover{border-color:var(--red);color:var(--red)}
   .admt .act button.del{color:var(--red)}
   .admt a{color:var(--navy);font-weight:600}
+  .chk-ok{color:#1a8a4a;font-weight:700}.chk-bad{color:var(--red);font-weight:700}.chk-wait{color:var(--mute)}
+  .admbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:6px 0 4px}
+  .admbar .btn{margin-top:0;border:0;cursor:pointer;font-family:inherit;padding:10px 16px}
   .admnote{margin:10px 0 0;padding:10px 12px;background:#fff8e6;border-left:4px solid var(--gold);font-size:13.5px;line-height:1.5}
 
   /* золотые уголки на карточках */
@@ -280,6 +283,7 @@
         <div class="gtabs"><button type="button" id="atU" aria-pressed="true">Участники</button><button type="button" id="atC" aria-pressed="false">Клипы</button></div>
         <div id="admUsers" class="admwrap"></div>
         <div id="admClips" class="admwrap" hidden></div>
+        <div id="chkHost" style="position:fixed;left:-9999px;top:0;width:320px;height:180px;overflow:hidden" aria-hidden="true"><div id="chkp"></div></div>
         <div style="margin-top:14px"><a href="#" id="admOut" style="font-size:13px;color:var(--mute)">Выйти из админки</a></div>
       </div>
     </div>
@@ -368,7 +372,7 @@ const I18N = {
     footer: "Новая причина — каждый день. Видео принадлежат их авторам и играют через официальный плеер YouTube. Сайт неофициальный и не связан с клубом.",
     heroAlt: "Игрок в красной майке «Арсенала» с золотым мячом в руке", photoAlt: "Нони Мадуэке",
     marq: "Нони Мадуэке — обладатель Золотого Мяча 2027!",
-    cdPre: "До Золотого мяча Нони осталось", cdDays: n => (n % 10 === 1 && n % 100 !== 11) ? "день" : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) ? "дня" : "дней", cdToday: "Сегодня церемония Золотого мяча. Нони, мы верим!", cdPost: "",
+    goat: "Легенда", cdPre: "До Золотого мяча Нони осталось", cdDays: n => (n % 10 === 1 && n % 100 !== 11) ? "день" : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) ? "дня" : "дней", cdToday: "Сегодня церемония Золотого мяча. Нони, мы верим!", cdPost: "",
     types: {}, clubs: {},
     quiz: "Вопрос дня", quizHint: "Один вопрос в день — отвечай правильно и копи стрик",
     streak: "Стрик", best: "рекорд", days: n => (n % 10 === 1 && n % 100 !== 11) ? "день" : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) ? "дня" : "дней",
@@ -393,7 +397,7 @@ const I18N = {
     footer: "A new reason every day. Videos belong to their authors and play through the official YouTube player. Unofficial site, not affiliated with any club.",
     heroAlt: "A player in a red Arsenal shirt holding a golden trophy ball", photoAlt: "Noni Madueke",
     marq: "Noni Madueke — Ballon D'Or winner 2027!",
-    cdPre: "Days until Noni's Ballon d'Or:", cdDays: n => n === 1 ? "day" : "days", cdToday: "Ballon d'Or ceremony day. We believe, Noni!", cdPost: "",
+    goat: "GOAT WATCH", cdPre: "Days until Noni's Ballon d'Or:", cdDays: n => n === 1 ? "day" : "days", cdToday: "Ballon d'Or ceremony day. We believe, Noni!", cdPost: "",
     types: {"Гол":"Goal","Обводка":"Dribble","Ассист":"Assist","Удар":"Shot","Фото":"Photo"},
     clubs: {"Англия":"England"},
     quiz: "Question of the day", quizHint: "One question a day — answer right and build a streak",
@@ -415,14 +419,14 @@ const CLIPS = [
     en:{t:"Winning goal against Nottingham Forest", d:"Premier League 2026/27"}},
   {id:"ussduQ61D_Y", short:true, type:"Обводка", t:"Дерзкий финт в матче с Ливерпулем", d:"Премьер-лига 2026/27",
     en:{t:"Cheeky skill against Liverpool", d:"Premier League 2026/27"}},
-  {id:"EzmT_raRs-A", type:"Гол", club:"Англия", t:"Второй гол Англии в Сербии — забивает Мадуэке", d:"Отбор к ЧМ-2026, Сербия — Англия",
+  {photo:true, type:"Фото", t:"Нони Мадуэке", d:"Это Нони Мадуэке.",
+    en:{t:"Noni Madueke", d:"This is Noni Madueke."}},
+  {id:"yBIzBV3jXuE", type:"Гол", club:"Англия", t:"Второй гол Англии в Сербии — забивает Мадуэке", d:"Отбор к ЧМ-2026, Сербия — Англия",
     en:{t:"England's second goal in Serbia — Madueke scores", d:"World Cup 2026 qualifier, Serbia v England"}},
   {id:"vIjjF-6hGK4", short:true, type:"Гол", t:"Магический гол издалека в ворота Брюгге", d:"Лига чемпионов 2025/26",
     en:{t:"Magical long-range goal against Club Brugge", d:"Champions League 2025/26"}},
   {id:"zZBZzP0BGVI", short:true, type:"Обводка", t:"Не остановить: рывок против Халл Сити", d:"Премьер-лига 2026/27",
     en:{t:"No stopping him: a run against Hull City", d:"Premier League 2026/27"}},
-  {id:"ZY40oUavae8", type:"Ассист", club:"Англия", t:"Передача Мадуэке — гол Уоткинса в ворота Греции", d:"Лига наций, Англия — Греция",
-    en:{t:"Madueke's assist — Watkins scores against Greece", d:"Nations League, England v Greece"}},
   {id:"iUAXy3kVRIo", short:true, type:"Ассист", t:"Магия Мадуэке перед голом Габи", d:"Борнмут — Арсенал, 2025/26",
     en:{t:"Madueke magic before Gabi's goal", d:"Bournemouth v Arsenal, 2025/26"}},
   {id:"P8yVSOL0Wgc", short:true, type:"Гол", t:"Завершил отличную комбинацию против Баварии", d:"Лига чемпионов 2025/26",
@@ -441,20 +445,12 @@ const CLIPS = [
     en:{t:"Madueke corner — Leeds keeper scores an own goal", d:"Premier League 2025/26"}},
   {id:"6HpjKNW0lEc", type:"Гол", t:"Мадуэке делает 2:2 в Ньюкасле", d:"Левой ногой между рук вратаря",
     en:{t:"Madueke makes it 2-2 at Newcastle", d:"Left-footed, through the keeper's arms"}},
-  {id:"mZyGyK-oFkM", type:"Гол", t:"Рикошетный гол открывает счёт против Форест", d:"Премьер-лига 2026/27",
-    en:{t:"Deflected goal opens the scoring against Forest", d:"Premier League 2026/27"}},
-  {id:"Bm4bHjixqJM", type:"Гол", t:"Удвоил преимущество против Кристал Пэлас", d:"Третий гол сезона",
+  {id:"_R7p_jDWKx4", short:true, type:"Гол", t:"Удвоил преимущество против Кристал Пэлас", d:"Третий гол сезона",
     en:{t:"Doubles the lead against Crystal Palace", d:"Third goal of the season"}},
-  {id:"zAbOeaq9IvM", type:"Гол", t:"Дальний удар в ворота Брюгге со всех ракурсов", d:"Лига чемпионов, 6-й тур",
-    en:{t:"Long-range strike against Club Brugge from every angle", d:"Champions League, matchday 6"}},
-  {id:"q-Pjk-_hDho", type:"Гол", t:"Первый гол за Арсенал — в ворота Баварии", d:"Лига чемпионов 2025/26",
+  {id:"cyV2YPK2aOE", short:true, type:"Гол", t:"Первый гол за Арсенал — в ворота Баварии", d:"Лига чемпионов 2025/26",
     en:{t:"First goal for Arsenal — against Bayern Munich", d:"Champions League 2025/26"}},
-  {id:"1IW47tU5MU0", type:"Гол", t:"Точный удар головой против Брентфорда", d:"Открыл счёт в гостях",
-    en:{t:"Clinical header against Brentford", d:"Opens the scoring away from home"}},
-  {id:"tAwTr7SIHe8", type:"Ассист", t:"Кросс Мадуэке — гол Зубименди в Лидсе", d:"Премьер-лига 2025/26",
-    en:{t:"Madueke cross — Zubimendi scores at Leeds", d:"Premier League 2025/26"}},
-  {photo:true, type:"Фото", t:"Нони Мадуэке", d:"Это Нони Мадуэке.",
-    en:{t:"Noni Madueke", d:"This is Noni Madueke."}}
+  {id:"ADYn9NVukfY", short:true, type:"Гол", t:"Точный удар головой против Брентфорда", d:"Открыл счёт в гостях",
+    en:{t:"Clinical header against Brentford", d:"Opens the scoring away from home"}}
 ];
 
 /* Банк вопросов: правильный ответ ВСЕГДА первый (на странице порядок перемешивается). */
@@ -1133,7 +1129,7 @@ function renderAdm(){
   // клипы
   const cw = $('admClips'); cw.textContent = '';
   const ct = document.createElement('table'); ct.className = 'admt';
-  ct.innerHTML = '<thead><tr><th>№</th><th>Дата</th><th>Тип</th><th>Название</th><th>Статус</th><th>Ссылка</th></tr></thead>';
+  ct.innerHTML = '<thead><tr><th>№</th><th>Дата</th><th>Тип</th><th>Название</th><th>Статус</th><th>Проверка здесь</th><th>Ссылка</th></tr></thead>';
   const cb = document.createElement('tbody');
   CLIPS.forEach((c, i) => {
     const tr = document.createElement('tr'); if (i === today) tr.className = 'now';
@@ -1141,7 +1137,9 @@ function renderAdm(){
     const ty = document.createElement('td'); setLabel(ty, TYPEKEY[c.type], c.type);
     const lk = document.createElement('td');
     if (c.id) { const a = document.createElement('a'); a.href = url(c); a.target = '_blank'; a.rel = 'noopener'; a.textContent = c.id; lk.append(a); } else lk.textContent = '—';
-    tr.append(cell(i + 1), cell(admDate(Math.floor(START / MS) + i)), ty, cell(c.t), cell(i < today ? 'был' : i === today ? 'сегодня' : 'ждёт'), lk);
+    const ck = document.createElement('td'), r = admChk[i];
+    if (r) { ck.textContent = r.t; ck.className = r.ok ? 'chk-ok' : (r.wait ? 'chk-wait' : 'chk-bad'); } else ck.textContent = c.id ? '' : '—';
+    tr.append(cell(i + 1), cell(admDate(Math.floor(START / MS) + i)), ty, cell(c.t), cell(i < today ? 'был' : i === today ? 'сегодня' : 'ждёт'), ck, lk);
     cb.append(tr);
   });
   ct.append(cb); cw.append(ct);
@@ -1149,6 +1147,41 @@ function renderAdm(){
   const n = document.createElement('div'); n.className = 'admnote';
   n.textContent = left > 0 ? 'Клипов хватит до ' + admDate(Math.floor(START / MS) + CLIPS.length - 1) + ' (ещё ' + left + ' дн.), потом они пойдут по второму кругу. Новые ссылки добавляются в массив CLIPS.' : 'Клипы закончились: сейчас показывается повтор. Добавьте новые в массив CLIPS.';
   cw.append(n);
+  const bar = document.createElement('div'); bar.className = 'admbar';
+  const bt = document.createElement('button'); bt.type = 'button'; bt.className = 'btn'; bt.id = 'chkBtn'; bt.textContent = admChkRun ? 'Проверяю…' : 'Проверить все клипы в моём браузере'; bt.disabled = admChkRun; bt.onclick = checkClips;
+  const bad = Object.values(admChk).filter(r => !r.ok && !r.wait).length, done = Object.values(admChk).filter(r => !r.wait).length;
+  const sm = document.createElement('span'); sm.style.cssText = 'font-size:13.5px;color:var(--mute)';
+  sm.textContent = done ? 'Проверено: ' + done + ' из ' + CLIPS.filter(c => c.id).length + ', проблемных: ' + bad + '. Результат зависит от вашей страны и сети.' : 'Проверка идёт из вашего браузера, поэтому показывает, что реально открывается в вашем регионе.';
+  bar.append(bt, sm); cw.prepend(bar);
+}
+let admChk = {}, admChkRun = false;
+function checkClips(){
+  if (!apiReady || !window.YT || !YT.Player) { $('admErr').textContent = 'Плеер YouTube не загружен (возможно, YouTube недоступен в вашей сети).'; return; }
+  const ids = []; CLIPS.forEach((c, i) => { if (c.id) ids.push([i, c.id]); });
+  admChk = {}; admChkRun = true; ids.forEach(([i]) => admChk[i] = {t: 'в очереди', wait: true});
+  let k = 0, timer = null, p = null, settled = true;
+  const finish = (ok, text) => {
+    if (settled) return; settled = true; clearTimeout(timer);
+    admChk[ids[k][0]] = {ok, t: text}; k++; renderAdm();
+    try { p.stopVideo(); } catch (e) {}
+    setTimeout(next, 150);
+  };
+  const next = () => {
+    if (k >= ids.length) { admChkRun = false; try { p.destroy(); } catch (e) {} renderAdm(); return; }
+    settled = false; admChk[ids[k][0]] = {t: 'проверяю…', wait: true}; renderAdm();
+    timer = setTimeout(() => finish(false, '? нет ответа'), 9000);
+    p.loadVideoById(ids[k][1]); try { p.mute(); } catch (e) {}
+  };
+  if (!document.getElementById('chkp')) { const d = document.createElement('div'); d.id = 'chkp'; $('chkHost').append(d); }
+  p = new YT.Player('chkp', {
+    host: YT_HOSTS[ytHostIdx], width: 320, height: 180, videoId: ids[0][1],
+    playerVars: {playsinline: 1, controls: 0},
+    events: {
+      onReady: () => { try { p.mute(); } catch (e) {} k = 0; settled = true; next(); },
+      onStateChange: e => { if (!settled && (e.data === 1 || e.data === 3 || e.data === 5)) finish(true, '✓ работает'); },
+      onError: e => { const c = e && e.data; finish(false, c === 100 ? '✕ видео удалено или закрыто' : (c === 101 || c === 150) ? '✕ встраивание запрещено' : '✕ ошибка ' + c); }
+    }
+  });
 }
 function admRoute(){
   const on = location.hash === '#admin';
@@ -1176,6 +1209,7 @@ function applyLang(){
   $('footTxt').textContent = l.footer;
   $('heroImg').alt = l.heroAlt;
   buildMarquee();
+  $('goat').textContent = l.goat;
   const cd = $('cd'); cd.hidden = cdLeft < 0; cd.textContent = '';
   if (cdLeft === 0) cd.textContent = l.cdToday;
   else if (cdLeft > 0) { const b = document.createElement('b'); b.textContent = cdLeft; cd.append(l.cdPre + ' ', b, ' ' + l.cdDays(cdLeft)); }
