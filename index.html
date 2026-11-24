@@ -149,6 +149,41 @@
   .b-moment .wrap{position:relative}
   .b-play{background:var(--bg);padding-top:44px;--next:#fff}
   .b-arch{background:#fff;padding:12px 0 64px}
+  .b-stat{background:#fff;padding:26px 0 18px}
+  .b-stat[hidden]{display:none}
+  .brk.stat::before,.brk.stat::after{border-color:var(--red)}
+  .sbody{padding:22px 20px 18px}
+  .sgrid{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:10px}
+  .snum{text-align:center}
+  .snum b{display:block;font-family:Oswald,'Arial Narrow',sans-serif;font-weight:700;font-size:clamp(46px,9vw,68px);line-height:1}
+  .snum.g b{color:var(--red)}.snum.a b{color:#b8901f}
+  .snum span{display:block;margin-top:4px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;font-size:13px;color:var(--navy)}
+  .snum small{display:block;margin-top:3px;font-size:12px;color:var(--mute);line-height:1.3}
+  .shead{position:relative;width:150px;height:150px}
+  .shead svg{position:absolute;inset:0;width:100%;height:100%;transform:rotate(-90deg)}
+  .shead .rg{fill:none;stroke-width:7;stroke-linecap:round;stroke-dasharray:var(--c) 999;stroke-dashoffset:var(--c);transition:stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1)}
+  .shead .rg.on{stroke-dashoffset:calc(var(--c) * (1 - var(--f)))}
+  .shead .rb{fill:none;stroke:#e9ebf1;stroke-width:7}
+  .sface{position:absolute;left:50%;top:50%;width:94px;height:94px;margin:-47px 0 0 -47px;border-radius:50%;background-color:#fff;background-repeat:no-repeat;background-size:cover;background-position:center;box-shadow:inset 0 0 0 2px #f1f2f6}
+  .sface.pop{animation:spop .7s cubic-bezier(.3,1.6,.5,1)}
+  @keyframes spop{0%{transform:scale(1)}40%{transform:translateY(-10px) scale(1.08)}100%{transform:scale(1)}}
+  .smeter{margin-top:18px}
+  .sml{display:flex;justify-content:space-between;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--navy);margin-bottom:5px}
+  .smb{height:10px;background:#e9ebf1;border-radius:2px;overflow:hidden}
+  .smb i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--red),#e8453c);transition:width 1.4s cubic-bezier(.2,.8,.2,1)}
+  .smeter small,.slast small{display:block;margin-top:5px;font-size:12px;color:var(--mute)}
+  .slast{margin-top:16px;display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+  .slast .lb{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--navy)}
+  .sdots{display:flex;gap:8px;flex-wrap:wrap}
+  .sm{min-width:54px;padding:6px 8px 4px;border:1px solid var(--line);border-radius:4px;background:#fafafb;text-align:center}
+  .sm .ic{display:flex;justify-content:center;align-items:center;gap:5px;min-height:24px}
+  .sm .it{position:relative;display:inline-block;width:24px;height:24px}
+  .sm .it svg{display:block;width:100%;height:100%;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+  .sm .it.g{color:var(--red)}.sm .it.a{color:#b8901f}.sm .it.x{color:#a4a9b8}
+  .sm .it b{position:absolute;right:-7px;top:-6px;min-width:15px;height:15px;border-radius:8px;background:var(--navy);color:#fff;font-size:10px;line-height:15px;padding:0 3px;font-weight:700}
+  .sm small{display:block;margin-top:2px;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+  .slast small{flex-basis:100%;margin:0}
+  @media (prefers-reduced-motion:reduce){.sface.pop{animation:none}.shead .rg,.smb i{transition:none}}
   .two{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,430px),1fr));gap:34px 28px;align-items:start}
 
 
@@ -231,6 +266,9 @@
     .b-play{padding-top:30px}
     .band.cut{padding-bottom:calc(var(--cut) + 30px)}
     .b-arch{padding-bottom:44px}
+    .shead{width:118px;height:118px}
+    .sface{width:74px;height:74px;margin:-37px 0 0 -37px;background-size:cover;background-position:center}
+    .sbody{padding:18px 14px 14px}
     .two{gap:30px}
     .mq .i{font-size:15px;padding:8px 0 8px 18px;gap:18px}
     .bigno{font-size:200px;bottom:-34px;left:-8px}
@@ -281,9 +319,10 @@
       <div class="gerr" id="admErr"></div>
       <div id="admMain" hidden>
         <div class="admstats" id="admStats"></div>
-        <div class="gtabs"><button type="button" id="atU" aria-pressed="true">Участники</button><button type="button" id="atC" aria-pressed="false">Клипы</button></div>
+        <div class="gtabs"><button type="button" id="atU" aria-pressed="true">Участники</button><button type="button" id="atC" aria-pressed="false">Клипы</button><button type="button" id="atS" aria-pressed="false">Статистика Нони</button></div>
         <div id="admUsers" class="admwrap"></div>
         <div id="admClips" class="admwrap" hidden></div>
+        <div id="admStat" class="admwrap" hidden></div>
         <div id="chkHost" style="position:fixed;left:-9999px;top:0;width:320px;height:180px;overflow:hidden" aria-hidden="true"><div id="chkp"></div></div>
         <div style="margin-top:14px"><a href="#" id="admOut" style="font-size:13px;color:var(--mute)">Выйти из админки</a></div>
       </div>
@@ -350,6 +389,31 @@
   </section>
 </div></div></section>
 
+<section class="band b-stat" id="stat" hidden><div class="wrap">
+  <section class="card brk stat">
+    <div class="bar"><span id="sTitle"></span><span class="tag" id="sSeason"></span></div>
+    <div class="sbody">
+      <div class="sgrid">
+        <div class="snum g"><b id="sGoals">0</b><span id="sGoalsL"></span><small id="sGoalsS"></small></div>
+        <div class="shead" role="img" id="sHead">
+          <svg viewBox="0 0 150 150" aria-hidden="true">
+            <circle class="rb" cx="75" cy="75" r="68"/><circle class="rg" id="sRg" cx="75" cy="75" r="68" stroke="#b80005" style="--c:427.3;--f:0"/>
+            <circle class="rb" cx="75" cy="75" r="58"/><circle class="rg" id="sRa" cx="75" cy="75" r="58" stroke="#d4a72c" style="--c:364.4;--f:0"/>
+          </svg>
+          <div class="sface" id="sFace"></div>
+        </div>
+        <div class="snum a"><b id="sAssists">0</b><span id="sAssistsL"></span><small id="sAssistsS"></small></div>
+      </div>
+      <div class="smeter">
+        <div class="sml"><span id="sMeterL"></span><span id="sPct"></span></div>
+        <div class="smb"><i id="sFill"></i></div>
+        <small id="sTarget"></small>
+      </div>
+      <div class="slast" id="sLast"><span class="lb" id="sLastL"></span><span class="sdots" id="sDots"></span></div>
+    </div>
+  </section>
+</div></section>
+
 <section class="band b-arch"><div class="wrap">
   <h2 id="allTitle"></h2>
   <div class="grid" id="grid"></div>
@@ -379,10 +443,14 @@ const I18N = {
     types: {}, clubs: {},
     quiz: "Вопрос дня", quizHint: "Один вопрос в день — отвечай правильно и копи стрик",
     streak: "Стрик", best: "рекорд", days: n => (n % 10 === 1 && n % 100 !== 11) ? "день" : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) ? "дня" : "дней",
-    hard: "Сложный", expert: "Экспертный",
+    easy: "Лёгкий", medium: "Средний", hard: "Сложный", expert: "Экспертный",
     okT: "Верно!", badT: "Неверно.", rightIs: "Правильный ответ:", source: "Источник:",
     okNote: n => "Стрик: " + n + " " + I18N.ru.days(n) + ". Новый вопрос — завтра.",
     badNote: "Стрик обнулён. Новый вопрос — завтра, попробуй снова.",
+    stTitle: "Счётчик Золотого мяча", stSeason: s => "Сезон " + s, stGoals: "голов", stAssists: "ассистов",
+    stGoalsS: n => n ? "у критиков — 0" : "рано судить, но мы уже всё решили", stAssistsS: n => n ? "щедрая душа" : "всё впереди",
+    stMeter: "До Золотого мяча", stTarget: "Норма Золотого мяча по версии сайта — 50 голов и ассистов", stLast: "Последние матчи",
+    stLeg: "мяч — гол, рукопожатие — ассист, крестик — без вклада", stUpd: d => "Обновлено " + d,
     glz: "Суперфаны Нони Мадуэке", glzIntro: "Впиши ник и вступай в рейтинг: считаем заходы, стрик заходов и правильные ответы в квизе.",
     nickPh: "Твой ник", join: "Вступить", members: n => n + " " + (n % 10 === 1 && n % 100 !== 11 ? "суперфан" : (n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 12 || n % 100 > 14)) ? "суперфана" : "суперфанов"),
     tabV: "Заходы", tabS: "Стрик заходов", tabQ: "Квиз: верных", tabQS: "Квиз: стрик", quizYou: "Квиз", rightOf: (r, t) => r + " из " + t, unitQ: "верно", noQuiz: "Пока никто не ответил на квиз.", you: "Ты", visits: "заходов", inRow: "подряд", bestS: "рекорд", place: "место", leave: "сменить ник",
@@ -405,10 +473,14 @@ const I18N = {
     clubs: {"Англия":"England"},
     quiz: "Question of the day", quizHint: "One question a day — answer right and build a streak",
     streak: "Streak", best: "best", days: n => n === 1 ? "day" : "days",
-    hard: "Hard", expert: "Expert",
+    easy: "Easy", medium: "Medium", hard: "Hard", expert: "Expert",
     okT: "Correct!", badT: "Not quite.", rightIs: "Correct answer:", source: "Source:",
     okNote: n => "Streak: " + n + " " + I18N.en.days(n) + ". New question tomorrow.",
     badNote: "Streak reset. New question tomorrow — try again.",
+    stTitle: "Ballon d'Or Meter", stSeason: s => "Season " + s, stGoals: "goals", stAssists: "assists",
+    stGoalsS: n => n ? "critics: 0" : "too early to judge, but we've already decided", stAssistsS: n => n ? "a generous soul" : "all to come",
+    stMeter: "Road to the Ballon d'Or", stTarget: "The site's Ballon d'Or standard: 50 goals and assists", stLast: "Last matches",
+    stLeg: "ball — goal, handshake — assist, cross — no contribution", stUpd: d => "Updated " + d,
     glz: "Noni Madueke Glazers", glzIntro: "Enter a nickname to join the ranking: we count visits, visit streaks and correct quiz answers.",
     nickPh: "Your nickname", join: "Join", members: n => n + (n === 1 ? " glazer" : " glazers"),
     tabV: "Visits", tabS: "Visit streak", tabQ: "Quiz: correct", tabQS: "Quiz: streak", quizYou: "Quiz", rightOf: (r, t) => r + " of " + t, unitQ: "right", noQuiz: "Nobody has answered the quiz yet.", you: "You", visits: "visits", inRow: "in a row", bestS: "best", place: "rank", leave: "change nickname",
@@ -434,14 +506,14 @@ const CLIPS = [
     en:{t:"Finishes a fine move against Bayern Munich", d:"Champions League 2025/26"}},
   {id:"iUAXy3kVRIo", short:true, type:"Ассист", t:"Магия Мадуэке перед голом Габи", d:"Борнмут — Арсенал, 2025/26",
     en:{t:"Madueke magic before Gabi's goal", d:"Bournemouth v Arsenal, 2025/26"}},
-  {id:"ZVY5GQt-BAg", short:true, type:"Факт", t:"Человек с крепкой дружной семьёй", d:"Награде давно не хватало семейных, скромных людей, а не любителей ночных клубов",
-    en:{t:"A man with a strong, close-knit family", d:"The award has long lacked modest family men rather than nightclub regulars"}},
+  {id:"yBIzBV3jXuE", type:"Гол", club:"Англия", t:"Второй гол Англии в Сербии — забивает Мадуэке", d:"Отбор к ЧМ-2026, Сербия — Англия",
+    en:{t:"England's second goal in Serbia — Madueke scores", d:"World Cup 2026 qualifier, Serbia v England"}},
   {photo:true, img:"fact_name", dark:true, type:"Факт", t:"Чуквунонсо Азука Тристан Мадуэке", d:"Возможно, самое длинное имя обладателя Золотого мяча в истории.",
     en:{t:"Chukwunonso Azuka Tristan Madueke", d:"Possibly the longest name of any Ballon d'Or winner in history."}},
   {id:"UdFrHU93dwc", short:true, type:"Гол", t:"Идеальный пас Эзе — гол Мадуэке", d:"Кубок Англии 2025/26, Уиган",
     en:{t:"Perfect Eze pass — Madueke scores", d:"FA Cup 2025/26, Wigan"}},
-  {id:"yBIzBV3jXuE", type:"Гол", club:"Англия", t:"Второй гол Англии в Сербии — забивает Мадуэке", d:"Отбор к ЧМ-2026, Сербия — Англия",
-    en:{t:"England's second goal in Serbia — Madueke scores", d:"World Cup 2026 qualifier, Serbia v England"}},
+  {id:"ZVY5GQt-BAg", short:true, type:"Факт", t:"Человек с крепкой дружной семьёй", d:"Награде давно не хватало семейных, скромных людей, а не любителей ночных клубов",
+    en:{t:"A man with a strong, close-knit family", d:"The award has long lacked modest family men rather than nightclub regulars"}},
   {id:"ni86N6-a7p8", short:true, type:"Гол", t:"Передача Гёкереша — гол Мадуэке в Праге", d:"Слава Прага — Арсенал, Лига чемпионов 2026/27",
     en:{t:"Gyökeres assist — Madueke scores in Prague", d:"Slavia Prague v Arsenal, Champions League 2026/27"}},
   {photo:true, img:"fact_away_ru", imgEn:"fact_away_en", dark:true, type:"Факт", t:"Король выездов", d:"Если Нони приехал к вам домой, готовьтесь вынимать мяч из сетки: 14 из 18 голов в АПЛ он забил на выезде — 78%. Это рекорд среди 824 игроков АПЛ, забивших больше 10 голов.",
@@ -471,7 +543,7 @@ const CLIPS = [
   Банк вопросов / Question bank.
   Правильный ответ ВСЕГДА первый в массиве o (на странице варианты перемешиваются).
   Порядок и количество вариантов в ru и en должны совпадать.
-  d: "hard" | "expert"  — метка сложности.
+  d: "easy" | "medium" | "hard" | "expert"  — метка сложности.
   s: источник для проверки.
   Чтобы добавить вопрос — скопируйте любой блок и допишите в конец массива.
 */
@@ -790,6 +862,213 @@ const QUESTIONS = [
     en: { q: "In which group was England drawn at the 2026 World Cup (the match against Croatia on 17 June)?",
           o: ["Group L", "Group A", "Group F", "Group H"],
           e: "The Croatia match in Arlington, Texas, was a Group L game." }
+  },
+  {
+    d: "easy",
+    ru: { q: "В какой стране родился Нони Мадуэке?",
+          o: ["Англия", "Нигерия", "Нидерланды", "Франция"],
+          e: "Он родился в Лондоне — в районе Барнет, — а родители у него из Нигерии." },
+    en: { q: "In which country was Noni Madueke born?",
+          o: ["England", "Nigeria", "Netherlands", "France"],
+          e: "He was born in London, in Barnet, to Nigerian parents." }
+  },
+  {
+    d: "easy",
+    ru: { q: "В каком месяце день рождения у Мадуэке?",
+          o: ["В марте", "В июне", "В сентябре", "В декабре"],
+          e: "Он родился 10 марта 2002 года." },
+    en: { q: "In which month is Madueke's birthday?",
+          o: ["March", "June", "September", "December"],
+          e: "He was born on 10 March 2002." }
+  },
+  {
+    d: "easy",
+    ru: { q: "На какой позиции играет Мадуэке?",
+          o: ["Вингер", "Вратарь", "Центральный защитник", "Опорный полузащитник"],
+          e: "Он быстрый вингер: обводит, бьёт по воротам и отдаёт голевые." },
+    en: { q: "What position does Madueke play?",
+          o: ["Winger", "Goalkeeper", "Centre-back", "Defensive midfielder"],
+          e: "He is a quick winger: he dribbles, shoots and creates chances." }
+  },
+  {
+    d: "easy",
+    ru: { q: "В каком клубе Мадуэке играл прямо перед «Арсеналом»?",
+          o: ["«Челси»", "«Тоттенхэм»", "«Ливерпуль»", "«Манчестер Юнайтед»"],
+          e: "В «Арсенал» он перешёл из «Челси» летом 2025 года." },
+    en: { q: "Which club did Madueke play for right before Arsenal?",
+          o: ["Chelsea", "Tottenham", "Liverpool", "Manchester United"],
+          e: "He joined Arsenal from Chelsea in the summer of 2025." }
+  },
+  {
+    d: "easy",
+    ru: { q: "Как называется домашний стадион «Арсенала»?",
+          o: ["«Эмирейтс»", "«Энфилд»", "«Стэмфорд Бридж»", "«Этихад»"],
+          e: "«Эмирейтс» — домашняя арена «Арсенала» в северном Лондоне." },
+    en: { q: "What is the name of Arsenal's home stadium?",
+          o: ["Emirates Stadium", "Anfield", "Stamford Bridge", "Etihad Stadium"],
+          e: "The Emirates is Arsenal's home ground in north London." }
+  },
+  {
+    d: "easy",
+    ru: { q: "Как болельщики называют игроков «Арсенала»?",
+          o: ["Канониры", "Лисы", "Вороны", "Шершни"],
+          e: "«Gunners» — «канониры», — отсылка к оружейному заводу, из которого вырос клуб." },
+    en: { q: "What is the nickname of Arsenal players?",
+          o: ["The Gunners", "The Foxes", "The Eagles", "The Hornets"],
+          e: "“The Gunners” is a nod to the armaments factory the club grew out of." }
+  },
+  {
+    d: "easy",
+    ru: { q: "Сколько голов нужно, чтобы называться хет-триком?",
+          o: ["Три", "Два", "Четыре", "Пять"],
+          e: "Хет-трик — это три гола одного игрока в одном матче. У Мадуэке такой есть: «Вулверхэмптон», 2024." },
+    en: { q: "How many goals make a hat-trick?",
+          o: ["Three", "Two", "Four", "Five"],
+          e: "A hat-trick is three goals by one player in a match. Madueke has one — against Wolves in 2024." }
+  },
+  {
+    d: "easy",
+    ru: { q: "Какой номер Мадуэке носит в «Арсенале»?",
+          o: ["20", "7", "9", "11"],
+          e: "Двадцатый номер. А одиннадцатый он носил в «Челси»." },
+    en: { q: "What shirt number does Madueke wear at Arsenal?",
+          o: ["20", "7", "9", "11"],
+          e: "Number 20. At Chelsea he wore 11." }
+  },
+  {
+    d: "easy",
+    ru: { q: "За какую сборную играет Мадуэке?",
+          o: ["Англия", "Нигерия", "Нидерланды", "Шотландия"],
+          e: "Он играет за сборную Англии, хотя корни семьи — нигерийские." },
+    en: { q: "Which national team does Madueke play for?",
+          o: ["England", "Nigeria", "Netherlands", "Scotland"],
+          e: "He plays for England, although his family roots are Nigerian." }
+  },
+  {
+    d: "easy",
+    ru: { q: "Какого цвета домашняя форма «Арсенала»?",
+          o: ["Красная с белыми рукавами", "Синяя", "Жёлтая", "Зелёная"],
+          e: "Красный и белый — фирменные цвета «Арсенала»." },
+    en: { q: "What colour is Arsenal's home kit?",
+          o: ["Red with white sleeves", "Blue", "Yellow", "Green"],
+          e: "Red and white are Arsenal's signature colours." }
+  },
+  {
+    d: "easy",
+    ru: { q: "В какой стране играет «ПСВ», где Мадуэке провёл юность?",
+          o: ["В Нидерландах", "В Бельгии", "В Германии", "В Испании"],
+          e: "ПСВ — клуб из города Эйндховен в Нидерландах. Туда Мадуэке уехал в 16 лет." },
+    en: { q: "In which country does PSV, where Madueke spent his youth, play?",
+          o: ["The Netherlands", "Belgium", "Germany", "Spain"],
+          e: "PSV is from Eindhoven in the Netherlands. Madueke moved there at 16." }
+  },
+  {
+    d: "easy",
+    ru: { q: "Как называется главная индивидуальная награда в мировом футболе?",
+          o: ["Золотой мяч", "Золотую бутсу", "Золотую перчатку", "Золотой свисток"],
+          e: "«Золотой мяч» — главная индивидуальная награда в мировом футболе." },
+    en: { q: "What is the top individual award in world football called?",
+          o: ["The Ballon d'Or", "The Golden Boot", "The Golden Glove", "The Golden Whistle"],
+          e: "The Ballon d'Or is the top individual prize in world football." }
+  },
+  {
+    d: "medium",
+    ru: { q: "Кто был кумиром детства Мадуэке?",
+          o: ["Криштиану Роналду", "Фрэнк Лэмпард", "Тьерри Анри", "Месси"],
+          e: "Мадуэке рассказывал, что вырос на Роналду, а его первая футболка была с фамилией Роналду." },
+    en: { q: "Who was Madueke's childhood idol?",
+          o: ["Cristiano Ronaldo", "Frank Lampard", "Thierry Henry", "Messi"],
+          e: "Madueke has said he grew up idolising Ronaldo — his first shirt carried Ronaldo's name." }
+  },
+  {
+    d: "medium",
+    ru: { q: "За какой клуб Мадуэке болел в детстве?",
+          o: ["«Манчестер Юнайтед»", "«Арсенал»", "«Челси»", "«Тоттенхэм»"],
+          e: "В детстве он болел за «Манчестер Юнайтед», а его брат и сестра — за «Челси»." },
+    en: { q: "Which club did Madueke support as a child?",
+          o: ["Manchester United", "Arsenal", "Chelsea", "Tottenham"],
+          e: "As a kid he supported Manchester United, while his brother and sister are Chelsea fans." }
+  },
+  {
+    d: "medium",
+    ru: { q: "Каким прозвищем Мадуэке называет Коула Палмера?",
+          o: ["Chippy", "Cole-Cola", "Palms", "Coley"],
+          e: "Chippy — так Мадуэке называет Палмера, с которым они вместе играли в «Челси»." },
+    en: { q: "What nickname does Madueke use for Cole Palmer?",
+          o: ["Chippy", "Cole-Cola", "Palms", "Coley"],
+          e: "“Chippy” is what Madueke calls Palmer, his former Chelsea teammate." }
+  },
+  {
+    d: "medium",
+    ru: { q: "С каким клубом Мадуэке провёл больше матчей, чем с любым другим соперником?",
+          o: ["«Арсенал»", "«Тоттенхэм»", "«Фулхэм»", "«Эвертон»"],
+          e: "Как ни странно, чаще всего он встречался именно с «Арсеналом» — до того, как перешёл в него." },
+    en: { q: "Which team had Madueke played more often than any other, before joining it?",
+          o: ["Arsenal", "Tottenham", "Fulham", "Everton"],
+          e: "Oddly enough, he had faced Arsenal more than any other side — before joining them." }
+  },
+  {
+    d: "medium",
+    ru: { q: "В какую академию Мадуэке попал в девять лет?",
+          o: ["«Кристал Пэлас»", "«Арсенал»", "«Челси»", "«Вест Хэм»"],
+          e: "Сначала был «Кристал Пэлас», потом «Тоттенхэм», а в 16 лет он уехал в ПСВ." },
+    en: { q: "Which academy did Madueke join at the age of nine?",
+          o: ["Crystal Palace", "Arsenal", "Chelsea", "West Ham"],
+          e: "First came Crystal Palace, then Tottenham, and at 16 he left for PSV." }
+  },
+  {
+    d: "medium",
+    ru: { q: "Что указано в био его Инстаграма?",
+          o: ["Follower of Jesus Christ", "Football player", "Arsenal #20", "Just a winger"],
+          e: "Мадуэке верующий человек — об этом он пишет и в своём профиле." },
+    en: { q: "What does his Instagram bio say?",
+          o: ["Follower of Jesus Christ", "Football player", "Arsenal #20", "Just a winger"],
+          e: "Madueke is openly religious, and it says so in his profile." }
+  },
+  {
+    d: "medium",
+    ru: { q: "Чем Мадуэке увлекается помимо футбола?",
+          o: ["Модой и музыкой", "Шахматами", "Рыбалкой", "Игрой на скрипке"],
+          e: "Он увлекается модой и музыкой." },
+    en: { q: "What are Madueke's interests outside football?",
+          o: ["Fashion and music", "Chess", "Fishing", "The violin"],
+          e: "He is into fashion and music." }
+  },
+  {
+    d: "medium",
+    ru: { q: "Кто получил «Золотой мяч» в 2024 году?",
+          o: ["Родри", "Винисиус", "Беллингем", "Мбаппе"],
+          e: "Родри из «Манчестер Сити» опередил Винисиуса и Беллингема." },
+    en: { q: "Who won the Ballon d'Or in 2024?",
+          o: ["Rodri", "Vinícius Júnior", "Bellingham", "Mbappé"],
+          e: "Rodri of Manchester City edged out Vinícius and Bellingham." }
+  },
+  {
+    d: "medium",
+    ru: { q: "Кто получил «Золотой мяч» в 2025 году?",
+          o: ["Усман Дембеле", "Ламин Ямаль", "Мохаммед Салах", "Рафинья"],
+          e: "Дембеле выиграл награду после сезона с «ПСЖ», где клуб взял Лигу чемпионов." },
+    en: { q: "Who won the Ballon d'Or in 2025?",
+          o: ["Ousmane Dembélé", "Lamine Yamal", "Mohamed Salah", "Raphinha"],
+          e: "Dembélé won it after a season in which PSG lifted the Champions League." }
+  },
+  {
+    d: "medium",
+    ru: { q: "Сколько раз Лионель Месси выигрывал «Золотой мяч»?",
+          o: ["8", "5", "7", "10"],
+          e: "Месси — рекордсмен: восемь «Золотых мячей». Нони стремится к первому." },
+    en: { q: "How many times has Lionel Messi won the Ballon d'Or?",
+          o: ["8", "5", "7", "10"],
+          e: "Messi holds the record with eight. Noni is chasing his first." }
+  },
+  {
+    d: "medium",
+    ru: { q: "Какое издание придумало и вручает «Золотой мяч»?",
+          o: ["France Football", "The Guardian", "UEFA", "FIFA"],
+          e: "Премию учредил французский журнал France Football в 1956 году." },
+    en: { q: "Which publication created and awards the Ballon d'Or?",
+          o: ["France Football", "The Guardian", "UEFA", "FIFA"],
+          e: "The French magazine France Football created the award in 1956." }
   }
 ];
 
@@ -807,6 +1086,8 @@ const ICONS = {
   dribble:'<circle cx="12" cy="13" r="2"/><path d="M5 21V12a7 7 0 0 1 14 0v6"/><path d="M15.5 15.5 19 19l3.5-3.5"/>',
   shot:   '<circle cx="16" cy="12" r="5"/><path d="M2 8h6M1 12h8M2 16h6"/><path d="M16 9.3l2 1.4-.7 2.3h-2.6L14 10.7z"/>',
   fact:   '<circle cx="12" cy="12" r="9"/><path d="M7.8 12.6l3 3 5.6-6.4"/>',
+  easy:   '<path d="M5 19c0-8 5-13 14-14 0 9-5 14-14 14z"/><path d="M5 19 13 11"/>',
+  medium: '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z" fill="none"/><path d="M12 3v14l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
   hard:   '<path d="M13 3 5 14h6l-1 7 8-11h-6z"/>',
   expert: '<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>'
 };
@@ -929,10 +1210,8 @@ function mulberry(a){ return function(){ a |= 0; a = a + 0x6D2B79F5 | 0; let t =
 function shuffled(n, seed){ const r = mulberry(seed), a = [...Array(n).keys()]; for (let i = n - 1; i > 0; i--){ const j = Math.floor(r() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 
 const NQ = QUESTIONS.length;
+const NQ_OLD = 35;                                                          // размер банка до расширения: нужен, чтобы не менять вопрос тем, кто уже ответил сегодня
 const dayKey = Math.floor(mskDay0 / MS);   // номер дня (общий для всех)
-const qCycle = Math.floor(dayKey / NQ);
-const qIdx = shuffled(NQ, qCycle * 7919 + 12345)[((dayKey % NQ) + NQ) % NQ];                   // «случайный», но один и тот же весь день; без повторов пока не пройден весь банк
-const qOrder = shuffled(QUESTIONS[qIdx].ru.o.length, dayKey * 31 + 7);                         // порядок вариантов (одинаков в RU и EN)
 const SKEY = 'madueke_quiz_v1';
 const CEREMONY = Date.UTC(2027, 9, 26);                                   // 26 октября 2027
 const cdLeft = Math.round((CEREMONY - mskDay0) / MS);
@@ -941,13 +1220,19 @@ try { qs = JSON.parse(localStorage.getItem(SKEY)) || {}; } catch (e) { qs = {}; 
 function saveQ(){ try { localStorage.setItem(SKEY, JSON.stringify(qs)); } catch (e) {} }
 const effStreak = () => (qs.streak && qs.last >= dayKey - 1) ? qs.streak : 0;     // пропустил день — стрик сгорел
 const answeredToday = () => qs.pickDay === dayKey;
+const qCycle = Math.floor(dayKey / NQ);
+const qIdxNew = shuffled(NQ, qCycle * 7919 + 12345)[((dayKey % NQ) + NQ) % NQ];                 // «случайный», но один и тот же весь день; без повторов пока не пройден весь банк
+const PIN_DAY = Math.floor(Date.UTC(2026, 10, 24) / MS);                        // 24.11.2026: в этот день у всех остаётся прежний вопрос, новый порядок — с завтра
+const qIdxOld = shuffled(NQ_OLD, Math.floor(dayKey / NQ_OLD) * 7919 + 12345)[((dayKey % NQ_OLD) + NQ_OLD) % NQ_OLD];
+const qIdx = answeredToday() ? (typeof qs.qidx === 'number' && qs.qidx < NQ ? qs.qidx : qIdxOld) : (dayKey === PIN_DAY ? qIdxOld : qIdxNew);   // кто уже ответил — видит свой вопрос
+const qOrder = shuffled(QUESTIONS[qIdx].ru.o.length, dayKey * 31 + 7);                         // порядок вариантов (одинаков в RU и EN)
 
 function answer(orig){
   if (answeredToday()) return;
   const ok = orig === 0, prev = effStreak();
   qs.streak = ok ? prev + 1 : 0;
   qs.best = Math.max(qs.best || 0, qs.streak);
-  qs.last = dayKey; qs.pickDay = dayKey; qs.pick = orig; qs.ok = ok;
+  qs.last = dayKey; qs.pickDay = dayKey; qs.qidx = qIdx; qs.pick = orig; qs.ok = ok;
   qs.total = (qs.total || 0) + 1; qs.right = (qs.right || 0) + (ok ? 1 : 0);
   saveQ(); renderQuiz();
   if (typeof gSync === 'function' && gs && gs.nick) gSync('visit');
@@ -1115,7 +1400,9 @@ function renderAdm(){
     const d = document.createElement('div'), b = document.createElement('b'), sp = document.createElement('span'); b.textContent = v; sp.textContent = t; d.append(b, sp); box.append(d);
   });
   $('atU').setAttribute('aria-pressed', String(admTab === 'u')); $('atC').setAttribute('aria-pressed', String(admTab === 'c'));
-  $('admUsers').hidden = admTab !== 'u'; $('admClips').hidden = admTab !== 'c';
+  $('atS').setAttribute('aria-pressed', String(admTab === 's'));
+  $('admUsers').hidden = admTab !== 'u'; $('admClips').hidden = admTab !== 'c'; $('admStat').hidden = admTab !== 's';
+  if (admTab === 's') renderAdmStat();
   // участники
   const uw = $('admUsers'); uw.textContent = '';
   if (!admData.users.length) { const e = document.createElement('div'); e.className = 'gempty'; e.textContent = 'Пока никого.'; uw.append(e); }
@@ -1167,6 +1454,42 @@ function renderAdm(){
   sm.textContent = done ? 'Проверено: ' + done + ' из ' + CLIPS.filter(c => c.id).length + ', проблемных: ' + bad + '. Результат зависит от вашей страны и сети.' : 'Проверка идёт из вашего браузера, поэтому показывает, что реально открывается в вашем регионе.';
   bar.append(bt, sm); cw.prepend(bar);
 }
+function renderAdmStat(){
+  const w = $('admStat'); w.textContent = '';
+  const st = admData.football || {goals: 0, assists: 0, last5: '', season: '2026/27'};
+  const f = document.createElement('form'); f.className = 'gform'; f.style.cssText = 'flex-wrap:wrap;align-items:flex-end;gap:12px';
+  const fld = (label, el) => { const d = document.createElement('label'); d.style.cssText = 'display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--mute)'; d.append(label, el); return d; };
+  const num = v => { const i = document.createElement('input'); i.type = 'number'; i.min = 0; i.max = 999; i.value = v; i.style.width = '90px'; return i; };
+  const ig = num(st.goals), ia = num(st.assists);
+  f.append(fld('Голы', ig), fld('Ассисты', ia));
+  const cur = st.last5 ? st.last5.split(',') : [];
+  const rows = [];
+  for (let k = 0; k < 5; k++) {
+    const [cg, ca, co] = (cur[k] || '').split('-');
+    const g1 = num(cg === undefined ? '' : cg), a1 = num(ca === undefined ? '' : ca);
+    g1.style.width = a1.style.width = '64px'; g1.max = a1.max = 9;
+    const o1 = document.createElement('input'); o1.maxLength = 4; o1.value = co || ''; o1.placeholder = 'TOT'; o1.style.width = '72px';
+    rows.push([g1, a1, o1]);
+    const box = document.createElement('div'); box.style.cssText = 'display:flex;gap:8px;align-items:flex-end;flex-basis:100%';
+    box.append(fld(k === 0 ? 'Последний матч: голы' : (k + 1) + '-й с конца: голы', g1), fld('ассисты', a1), fld('соперник', o1));
+    f.append(box);
+  }
+  const b = document.createElement('button'); b.className = 'btn'; b.type = 'submit'; b.textContent = 'Сохранить';
+  const msg = document.createElement('span'); msg.style.cssText = 'font-size:13.5px;color:var(--mute)';
+  f.append(b, msg);
+  f.onsubmit = async e => {
+    e.preventDefault();
+    const seq = rows.filter(([g1, a1]) => g1.value !== '' && a1.value !== '').map(([g1, a1, o1]) => g1.value + '-' + a1.value + (/^[A-Za-z]{2,4}$/.test(o1.value.trim()) ? '-' + o1.value.trim().toUpperCase() : ''));
+    msg.textContent = 'Сохраняю…';
+    const r = await gCall({action: 'admin_setstats', key: admKey, day: dayKey, goals: ig.value, assists: ia.value, last5: seq.join(',')}).catch(() => null);
+    if (r && r.ok) { admData.football = r.football; msg.textContent = 'Сохранено. Сайт покажет новые цифры при следующем заходе.'; sData = r.football; renderStat(); }
+    else msg.textContent = r && r.error === 'bad_stats' ? 'Проверь числа: от 0 до 999.' : admErr(r && r.error);
+  };
+  w.append(f);
+  const n = document.createElement('div'); n.className = 'admnote';
+  n.textContent = 'Матчи: сверху самый свежий, ниже более старые. Строку с пустыми голами или ассистами сайт пропускает. Если оба числа 0, будет крестик. Соперник — 2–4 буквы, например TOT, необязательно. Цифры можно взять с FBref.';
+  w.append(n);
+}
 let admChk = {}, admChkRun = false;
 function checkClips(){
   if (!apiReady || !window.YT || !YT.Player) { $('admErr').textContent = 'Плеер YouTube не загружен (возможно, YouTube недоступен в вашей сети).'; return; }
@@ -1204,8 +1527,64 @@ function admRoute(){
 $('admLogin').addEventListener('submit', e => { e.preventDefault(); admKey = $('admKey').value; admCall(); });
 $('atU').onclick = () => { admTab = 'u'; renderAdm(); };
 $('atC').onclick = () => { admTab = 'c'; renderAdm(); };
+$('atS').onclick = () => { admTab = 's'; renderAdm(); };
 $('admOut').onclick = e => { e.preventDefault(); admKey = ''; admData = null; try { sessionStorage.removeItem(ADMK); } catch (er) {} $('admKey').value = ''; history.replaceState(null, '', '#' + lang); admRoute(); };
 window.addEventListener('hashchange', admRoute);
+
+/* ---------- Счётчик Золотого мяча: цифры вводятся в админке, лежат в листе stats ---------- */
+let sData = null;
+const STAT_GOAL_CAP = 25, STAT_AST_CAP = 15, STAT_TARGET = 50, STKEY = 'madueke_stat_seen';
+$('sFace').style.backgroundImage = 'url(data:image/jpeg;base64,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)';
+function renderStat(){
+  const box = $('stat');
+  if (!sData) { box.hidden = true; return; }
+  box.hidden = false;
+  const l = L(), g = sData.goals, a = sData.assists;
+  $('sTitle').textContent = l.stTitle;
+  $('sSeason').textContent = l.stSeason(sData.season);
+  $('sGoals').textContent = g; $('sAssists').textContent = a;
+  $('sGoalsL').textContent = l.stGoals; $('sAssistsL').textContent = l.stAssists;
+  $('sGoalsS').textContent = l.stGoalsS(g); $('sAssistsS').textContent = l.stAssistsS(a);
+  $('sHead').setAttribute('aria-label', l.photoAlt + ': ' + g + ' ' + l.stGoals + ', ' + a + ' ' + l.stAssists);
+  const pct = Math.min(100, Math.round((g + a) / STAT_TARGET * 100));
+  $('sMeterL').textContent = l.stMeter; $('sPct').textContent = pct + '%';
+  $('sTarget').textContent = l.stTarget + (sData.updated ? ' · ' + l.stUpd(new Date(sData.updated * MS).toLocaleDateString(l.locale, {day: 'numeric', month: 'short', timeZone: 'UTC'})) : '');
+  const dots = $('sDots'); dots.textContent = '';
+  const seq = sData.last5 ? sData.last5.split(',') : [];
+  const svgIcon = (k, n, cls) => {
+    const s = document.createElement('span'); s.className = 'it ' + cls;
+    s.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true">' + ICONS[k] + '</svg>';
+    if (n > 1) { const b = document.createElement('b'); b.textContent = '×' + n; s.append(b); }
+    return s;
+  };
+  seq.forEach(m => {
+    const [gg, aa, opp] = m.split('-'), gn = +gg, an = +aa;
+    const c = document.createElement('div'); c.className = 'sm';
+    const ic = document.createElement('div'); ic.className = 'ic';
+    if (gn) ic.append(svgIcon('goal', gn, 'g'));
+    if (an) ic.append(svgIcon('assist', an, 'a'));
+    if (!gn && !an) { const x = document.createElement('span'); x.className = 'it x'; x.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>'; ic.append(x); }
+    c.append(ic);
+    if (opp) { const sm = document.createElement('small'); sm.textContent = opp; c.append(sm); }
+    c.title = (opp ? opp + ': ' : '') + gn + ' ' + l.stGoals + ', ' + an + ' ' + l.stAssists;
+    dots.append(c);
+  });
+  $('sLast').hidden = !seq.length;
+  $('sLastL').textContent = l.stLast;
+  const f1 = Math.min(1, g / STAT_GOAL_CAP), f2 = Math.min(1, a / STAT_AST_CAP);
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    $('sRg').style.setProperty('--f', f1); $('sRg').classList.add('on');
+    $('sRa').style.setProperty('--f', f2); $('sRa').classList.add('on');
+    $('sFill').style.width = pct + '%';
+  }));
+  let seen = null; try { seen = JSON.parse(localStorage.getItem(STKEY)); } catch (e) {}
+  if (seen && (g > seen.g || a > seen.a)) { const f = $('sFace'); f.classList.remove('pop'); void f.offsetWidth; f.classList.add('pop'); }
+  try { localStorage.setItem(STKEY, JSON.stringify({g: g, a: a})); } catch (e) {}
+}
+async function loadStats(){
+  if (!gOn()) return;
+  try { const r = await gCall({action: 'stats', day: dayKey}); if (r && r.ok && r.stats && typeof r.stats.goals === 'number') { sData = r.stats; renderStat(); } } catch (e) {}
+}
 
 function applyLang(){
   const l = L();
@@ -1233,6 +1612,7 @@ function applyLang(){
   { const cc = clipOf(curIdx); if (cc.photo) $('photo').src = photoSrc(cc); }
   renderQuiz();
   renderGlz();
+  renderStat();
 }
 
 function setLang(code){
@@ -1255,6 +1635,7 @@ applyLang();
 show(today);
 admRoute();
 if (gOn()) gSync(gs.nick ? 'visit' : 'top');
+loadStats();
 </script>
 </body>
 </html>
